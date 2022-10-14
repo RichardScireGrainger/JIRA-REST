@@ -287,7 +287,7 @@ sub _build_path {
 
     # Prefix $path with the default API prefix unless it already specifies
     # one or it's an absolute URL.
-    $path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;
+    #$path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;  # MOD
 
     if (defined $query) {
         croak $self->_error("The QUERY argument must be a hash reference.")
