@@ -14,9 +14,9 @@ use JSON 2.23;
 use REST::Client;
 use HTTP::CookieJar::LWP;
 
-my updates = [
-			  '2022-10-14: Modifed to work with other APIs.'
-			 ];
+my $updates = [                                                #MOD
+			   '2022-10-14: Modifed to work with other APIs.'  #MOD
+			  ];                                               #MOD
 
 sub new {
     my ($class, %args) = &_grok_args;
@@ -291,7 +291,7 @@ sub _build_path {
 
     # Prefix $path with the default API prefix unless it already specifies
     # one or it's an absolute URL.
-    #$path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;  # MOD
+    #$path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;  #MOD
 
     if (defined $query) {
         croak $self->_error("The QUERY argument must be a hash reference.")
