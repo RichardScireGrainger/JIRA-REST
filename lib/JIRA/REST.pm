@@ -14,6 +14,10 @@ use JSON 2.23;
 use REST::Client;
 use HTTP::CookieJar::LWP;
 
+my updates = [
+			  '2022-10-14: Modifed to work with other APIs.'
+			 ];
+
 sub new {
     my ($class, %args) = &_grok_args;
 
