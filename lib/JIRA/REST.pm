@@ -14,9 +14,10 @@ use JSON 2.23;
 use REST::Client;
 use HTTP::CookieJar::LWP;
 
-my $updates = [                                                #MOD
-			   '2022-10-14: Modifed to work with other APIs.'  #MOD
-			  ];                                               #MOD
+my $updates = [                                                          #MOD
+               '2022-10-14: Modifed to work with other APIs.',           #MOD
+               '2022-10-21: Edded new error location: error->message.',  #MOD
+              ];                                                         #MOD
 
 sub new {
     my ($class, %args) = &_grok_args;
@@ -232,6 +233,8 @@ sub _error {
             # look them up from the scant documentation at
             # https://docs.atlassian.com/jira/REST/latest/.
 
+            use Data::Dump qw(dump);                     #MOD
+            say STDERR "REST.pm Error: " . dump($error); #MOD
             # /issue/bulk tucks the errors one level down, inside the
             # 'elementErrors' hash.
             $error = $error->{elementErrors} if exists $error->{elementErrors};
@@ -248,6 +251,9 @@ sub _error {
 
             # some give us a single message in 'errorMessage'
             $msg .= $error->{errorMessage} . qq{\n} if $error->{errorMessage};
+
+            # some give us a single message in 'error->message'                                             #MOD
+            $msg .= $error->{error}->{message} . qq{\n} if ($error->{error} && $error->{error}->{message}); #MOD
         } else {
             $msg .= $content;
         }
