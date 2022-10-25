@@ -13,6 +13,12 @@ use URI::Escape;
 use JSON 2.23;
 use REST::Client;
 use HTTP::CookieJar::LWP;
+use Data::Dump qw(dump); #MOD
+
+my $updates = [                                                          #MOD
+               '2022-10-14: Modifed to work with other APIs.',           #MOD
+               '2022-10-21: Edded new error location: error->message.',  #MOD
+              ];                                                         #MOD
 
 sub new {
     my ($class, %args) = &_grok_args;
@@ -228,6 +234,7 @@ sub _error {
             # look them up from the scant documentation at
             # https://docs.atlassian.com/jira/REST/latest/.
 
+            say STDERR "REST.pm Error: " . dump($error); #MOD
             # /issue/bulk tucks the errors one level down, inside the
             # 'elementErrors' hash.
             $error = $error->{elementErrors} if exists $error->{elementErrors};
@@ -244,6 +251,9 @@ sub _error {
 
             # some give us a single message in 'errorMessage'
             $msg .= $error->{errorMessage} . qq{\n} if $error->{errorMessage};
+
+            # some give us a single message in 'error->message'                                             #MOD
+            $msg .= $error->{error}->{message} . qq{\n} if ($error->{error} && $error->{error}->{message}); #MOD
         } else {
             $msg .= $content;
         }
@@ -287,7 +297,7 @@ sub _build_path {
 
     # Prefix $path with the default API prefix unless it already specifies
     # one or it's an absolute URL.
-    #$path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;  # MOD
+    #$path = $self->{api} . $path unless $path =~ m@^(?:/rest/|(?i)https?:)@;  #MOD
 
     if (defined $query) {
         croak $self->_error("The QUERY argument must be a hash reference.")
@@ -342,6 +352,7 @@ sub POST {
     $headers->{'Content-Type'} //= 'application/json;charset=UTF-8';
 
     $self->{rest}->POST($path, $self->{json}->encode($value), $headers);
+	###say STDERR "REST.pm POST _content: " . dump($self->_content()); #MOD
 
     return $self->_content();
 }
