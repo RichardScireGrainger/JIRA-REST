@@ -17,12 +17,7 @@ use Data::Dump qw(dump); #MOD
 
 my $updates = [                                                          #MOD
                '2022-10-14: Modifed to work with other APIs.',           #MOD
-               '2022-10-21: Edded new error location: error->message.',  #MOD
-              ];                                                         #MOD
-
-my $updates = [                                                          #MOD
-               '2022-10-14: Modifed to work with other APIs.',           #MOD
-               '2022-10-21: Edded new error location: error->message.',  #MOD
+               '2022-10-21: Added new error location: error->message.',  #MOD
               ];                                                         #MOD
 
 sub new {
