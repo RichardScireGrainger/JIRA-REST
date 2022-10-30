@@ -16,8 +16,9 @@ use HTTP::CookieJar::LWP;
 use Data::Dump qw(dump); #MOD
 
 my $updates = [                                                          #MOD
-               '2022-10-14: Modifed to work with other APIs.',           #MOD
+               '2022-10-27: Added HTML handling for returned content.',  #MOD
                '2022-10-21: Added new error location: error->message.',  #MOD
+               '2022-10-14: Modifed to work with other APIs.',           #MOD
               ];                                                         #MOD
 
 sub new {
@@ -287,6 +288,8 @@ sub _content {
         return $self->{json}->decode($content);
     } elsif ($type =~ m:^text/plain:i) {
         return $content;
+    } elsif ($type =~ m:text/html:i && eval {require HTML::TreeBuilder}) { #MOD
+        return HTML::TreeBuilder->new_from_content($content)->as_text;     #MOD
     } else {
         croak $self->_error("I don't understand content with Content-Type '$type'.");
     }
