@@ -235,7 +235,7 @@ sub _error {
             # look them up from the scant documentation at
             # https://docs.atlassian.com/jira/REST/latest/.
 
-            say STDERR "Jira-REST.pm Error: " . dump($error); #MOD
+            ###say STDERR "Jira-REST.pm Error: " . dump($error); #MOD
             # /issue/bulk tucks the errors one level down, inside the
             # 'elementErrors' hash.
             $error = $error->{elementErrors} if exists $error->{elementErrors};
@@ -247,7 +247,19 @@ sub _error {
 
             # And some tuck them in the 'errors' hash.
             if (my $errors = $error->{errors}) {
-                $msg .= "- [$_] $errors->{$_}\n" foreach sort keys %$errors;
+                my $ref = ref $errors;                                             #MOD
+                if ($ref eq 'ARRAY')                                               #MOD
+                {                                                                  #MOD
+                    $msg .= "- [$_->{message}]\n" foreach @$errors;                #MOD
+                }                                                                  #MOD
+                elsif ($ref eq 'HASH')                                             #MOD
+                {                                                                  #MOD
+                    $msg .= "- [$_] $errors->{$_}\n" foreach sort keys %$errors;
+                }                                                                  #MOD
+                else                                                               #MOD
+                {                                                                  #MOD
+                    say STDERR "Unknown error container: " . dump($errors);        #MOD
+                }                                                                  #MOD
             }
 
             # some give us a single message in 'errorMessage'
@@ -355,7 +367,6 @@ sub POST {
     $headers->{'Content-Type'} //= 'application/json;charset=UTF-8';
 
     $self->{rest}->POST($path, $self->{json}->encode($value), $headers);
-	###say STDERR "REST.pm POST _content: " . dump($self->_content()); #MOD
 
     return $self->_content();
 }
